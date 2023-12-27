@@ -29,10 +29,10 @@ public class ItemTool {
         protected void onPostExecute(Boolean success) {
             if (success) {
                 // 插入成功
-                Toast.makeText(context, "插入成功", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "添加成功", Toast.LENGTH_SHORT).show();
             } else {
                 // 插入失败
-                Toast.makeText(context, "插入失败", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "添加失败", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -65,30 +65,74 @@ public class ItemTool {
         }
     }
 
-    public class DeleteItemTask extends AsyncTask<Item, Void, Boolean> {
+    public static class DeleteItemTask extends AsyncTask<Integer, Void, Boolean> {
+        @SuppressLint("StaticFieldLeak")
         private Context context;
+        private final int id;
 
-        public DeleteItemTask(Context context) {
-            this.context = context;
+        public DeleteItemTask(Context context, int id) {
+            this.context = context;;
+            this.id = id;
         }
 
         @Override
-        protected Boolean doInBackground(Item... items) {
+        protected Boolean doInBackground(Integer... ids) {
             ItemDatabase database = ItemDatabase.getInstance(context);
             ItemDao itemDao = database.itemDao();
-            itemDao.delete(items[0]);
-            // 返回删除操作的结果，true表示成功，false表示失败
-            return true;
+            Item item = itemDao.getItemById(id);
+            if (item != null) {
+                itemDao.delete(item);
+                return true;
+            } else {
+                return false;
+            }
         }
 
         @Override
         protected void onPostExecute(Boolean success) {
             if (success) {
-                // 删除成功
                 Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show();
             } else {
-                // 删除失败
                 Toast.makeText(context, "删除失败", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public static class CopyItemTask extends AsyncTask<Integer, Void, Boolean> {
+        @SuppressLint("StaticFieldLeak")
+        private Context context;
+        private final int id;
+
+        public CopyItemTask(Context context, int id) {
+            this.context = context;;
+            this.id = id;
+        }
+
+        @SuppressLint("WrongThread")
+        @Override
+        protected Boolean doInBackground(Integer... ids) {
+            ItemDatabase database = ItemDatabase.getInstance(context);
+            ItemDao itemDao = database.itemDao();
+            Item item = itemDao.getItemById(id);
+            if (item != null) {
+                Item Copyitem = new Item();
+                Copyitem.setName(item.getName());
+                Copyitem.setBirthDate(item.getBirthDate());
+                Copyitem.setExpirationDate(item.getExpirationDate());
+                Copyitem.setRemindDate(item.getRemindDate());
+                new InsertItemTask(context).execute(Copyitem);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (success) {
+                Toast.makeText(context, "复制成功", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "复制失败", Toast.LENGTH_SHORT).show();
             }
         }
     }

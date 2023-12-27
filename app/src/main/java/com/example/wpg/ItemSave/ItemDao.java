@@ -25,6 +25,7 @@ public interface ItemDao {
     @Query("SELECT * FROM items")
     List<Item> getAllItems();
 
-    // 其他查询方法
+    @Query("SELECT * FROM items WHERE id = :itemId")
+    Item getItemById(int itemId);
 }
 

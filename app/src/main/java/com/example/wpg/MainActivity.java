@@ -6,15 +6,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -39,8 +45,6 @@ public class MainActivity extends AppCompatActivity implements ItemTool.OnTaskCo
         database = Room.databaseBuilder(getApplicationContext(), ItemDatabase.class, "my-database")
                 .build();
         initView();
-        setClick();
-
         isCreated = true;
     }
 
@@ -62,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements ItemTool.OnTaskCo
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.home_title);
         getAllItems();
+        setClick();
     }
 
     private void getAllItems() {
@@ -106,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements ItemTool.OnTaskCo
                 includedView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        showToolsDialog(MainActivity.this, item.getId());
                     }
                 });
             }
@@ -121,9 +126,38 @@ public class MainActivity extends AppCompatActivity implements ItemTool.OnTaskCo
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, addItem.class);
                 startActivity(intent);
-
             }
         });
+    }
+
+    private void showToolsDialog(Context context, int id) {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_item_function);
+
+        // 设置Dialog的位置为底部
+        Window window = dialog.getWindow();
+        if (window != null) {
+            WindowManager.LayoutParams layoutParams = window.getAttributes();
+            layoutParams.gravity = Gravity.BOTTOM;
+            window.setAttributes(layoutParams);
+        }
+        dialog.show();
+        LinearLayout btn_copy = dialog.findViewById(R.id.btn_copy);
+        LinearLayout btn_edit = dialog.findViewById(R.id.btn_edit);
+        LinearLayout btn_delete = dialog.findViewById(R.id.btn_delete);
+        LinearLayout btn_cancel = dialog.findViewById(R.id.btn_cancel);
+
+        btn_copy.setOnClickListener(v -> {
+            new ItemTool.CopyItemTask(this, id).execute();
+            initView();
+            dialog.dismiss()
+        ;});
+        btn_delete.setOnClickListener(v -> {
+            new ItemTool.DeleteItemTask(context, id).execute();
+            initView();
+            dialog.dismiss();
+        });
+        btn_cancel.setOnClickListener(v -> dialog.dismiss());
     }
 
     // 设置按钮
