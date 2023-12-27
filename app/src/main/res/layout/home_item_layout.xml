@@ -3,9 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/item_layout"
     android:layout_width="match_parent"
-    android:layout_height="66dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
+    android:layout_height="80dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingBottom="15dp"
     android:orientation="horizontal">
 
     <RelativeLayout

@@ -3,28 +3,51 @@ package com.example.wpg;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+import com.example.wpg.ItemSave.Item;
+import com.example.wpg.ItemSave.ItemDatabase;
+import com.example.wpg.ItemSave.ItemTool;
+import com.example.wpg.utils.switchDate;
+
+import java.util.List;
+import java.util.Objects;
+
+public class MainActivity extends AppCompatActivity implements ItemTool.OnTaskCompleted {
     private static boolean isCreated = false;
 
-//    private MyAdapter_item adapter;
+    private ItemDatabase database;
     private ImageView addImageView;
     private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        database = Room.databaseBuilder(getApplicationContext(), ItemDatabase.class, "my-database")
+                .build();
         initView();
         setClick();
 
         isCreated = true;
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        initView();
     }
 
     // 页面初始化
@@ -37,9 +60,59 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.home_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.home_title);
-
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.home_title);
+        getAllItems();
     }
+
+    private void getAllItems() {
+        new ItemTool.GetAllItemsTask(this, this).execute();
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onTaskCompleted(List<Item> items) {
+        if (items != null && !items.isEmpty()) {
+            for (Item item : items) {
+                // 将itemCard 加载到 主页面
+                ViewGroup mainLayout = null;
+                View includedView = LayoutInflater.from(this).inflate(R.layout.home_item_layout, null, false);
+                mainLayout = findViewById(R.id.item_card);
+                mainLayout.addView(includedView);
+
+                String name = item.getName();
+                Long currentTimestamp = System.currentTimeMillis();
+                Long ExpirationDate = item.getExpirationDate();
+                Long Days = switchDate.getDaysBetweenTimestamps(currentTimestamp, ExpirationDate);
+
+                RelativeLayout itemStateBoxView = includedView.findViewById(R.id.item_state_box);
+                TextView itemStateView = includedView.findViewById(R.id.item_state);
+                TextView itemDateView = includedView.findViewById(R.id.item_date);
+
+                if (currentTimestamp <= ExpirationDate) {
+                    itemStateBoxView.setBackgroundResource(R.drawable.rounded_background_right_pink);
+                    itemStateView.setText(String.valueOf(Days));
+                    itemStateView.setTypeface(null, Typeface.BOLD);
+                    itemDateView.setText("天");
+                } else {
+                    itemStateBoxView.setBackgroundResource(R.drawable.rounded_background_right_yellow);
+                    itemStateView.setText("已过期");
+                    itemDateView.setText(Days + "天");
+                }
+
+                TextView itemNameTextView = includedView.findViewById(R.id.item_name);
+                itemNameTextView.setText(name);
+
+                // 添加点击监听器
+                includedView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+            }
+        }
+    }
+
 
     private void setClick() {
         addImageView = findViewById(R.id.home_add_button);
@@ -51,14 +124,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-        // 监听item
-//        adapter.setOnItemClickListener(new MyAdapter_item.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(int position) {
-//                // 处理子项的点击事件
-//            }
-//        });
     }
 
     // 设置按钮
@@ -71,5 +136,4 @@ public class MainActivity extends AppCompatActivity {
     public static boolean isMainActivityCreated() {
         return isCreated;
     }
-
 }

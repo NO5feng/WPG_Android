@@ -1,17 +1,25 @@
 package com.example.wpg;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.wpg.ItemSave.Item;
+import com.example.wpg.ItemSave.ItemDao;
+import com.example.wpg.ItemSave.ItemDatabase;
+import com.example.wpg.ItemSave.ItemTool;
 import com.example.wpg.entity.SlideDialog;
 import com.example.wpg.utils.switchDate;
 
@@ -53,11 +61,21 @@ public class addItem extends AppCompatActivity {
 
         cancel_btn.setOnClickListener(v -> { onBackPressed(); });
         save_btn.setOnClickListener(v ->{
+            String item_name = editTextView.getText().toString();
             long birthDate = switchDate.switchTimestamp(birthDateTextView.getText().toString());
             long expirationDate = switchDate.switchTimestamp(expirationDateTextView.getText().toString());
+
+            // 这里的存储 随便做做 一般 这类信息 都应该存储到后端 然后 通过API 调用 重新获取
+            Item item = new Item();
+            item.setName(item_name);
+            item.setBirthDate(birthDate);
+            item.setExpirationDate(expirationDate);
+            item.setRemindDate(remindDate);
+            new ItemTool.InsertItemTask(this).execute(item);
             onBackPressed();
         });
     }
+
 
     private void initDate() {
 

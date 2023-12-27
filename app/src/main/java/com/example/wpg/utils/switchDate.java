@@ -45,4 +45,12 @@ public class switchDate {
             return null;
         }
     }
+
+    public static long getDaysBetweenTimestamps(long timestamp1, long timestamp2) {
+        long millisecondsPerDay = 24 * 60 * 60 * 1000; // 一天的毫秒数
+        long diffInMillis = Math.abs(timestamp1 - timestamp2);
+        long days = diffInMillis / millisecondsPerDay;
+        return days;
+    }
+
 }
