@@ -6,8 +6,7 @@
 
 ## 简介
 记录物品的过期时间
-![WPG](https://github.com/NO5feng/WPG_Android/assets/97101453/a0ea3c15-e289-42d2-b9cd-0371b47dfb1b)
-
-
 https://github.com/NO5feng/WPG_Android/assets/97101453/3d574d5d-6902-4907-99f2-b1264e756816
 
+## 项目图
+![WPG](https://github.com/NO5feng/WPG_Android/assets/97101453/a0ea3c15-e289-42d2-b9cd-0371b47dfb1b)
