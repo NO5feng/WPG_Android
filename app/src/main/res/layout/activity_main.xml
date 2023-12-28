@@ -44,15 +44,17 @@
                     android:gravity="center_horizontal">
 
 
-                    <EditText
+                    <SearchView
                         android:id="@+id/search_edittext"
                         android:layout_width="320sp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="45sp"
                         android:background="@drawable/edit_background"
-                        android:hint="@string/home_edit_hint"
+                        android:queryHint="@string/home_edit_hint"
                         android:textColorHint="@color/grey"
                         android:drawableStart="@drawable/edit_logo"
                         android:drawablePadding="8dp"
+                        android:iconifiedByDefault="false"
+                        android:queryBackground="@null"
                         android:padding="8dp" />
 
                 </LinearLayout>

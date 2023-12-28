@@ -1,10 +1,17 @@
 package com.example.wpg.ItemSave;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.wpg.R;
+import com.example.wpg.utils.switchDate;
+
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class ItemTool {
@@ -28,19 +35,19 @@ public class ItemTool {
         @Override
         protected void onPostExecute(Boolean success) {
             if (success) {
-                // 插入成功
                 Toast.makeText(context, "添加成功", Toast.LENGTH_SHORT).show();
             } else {
-                // 插入失败
                 Toast.makeText(context, "添加失败", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    public class UpdateItemTask extends AsyncTask<Item, Void, Boolean> {
+    public static class UpdateItemTask extends AsyncTask<Item, Void, Boolean> {
         private Context context;
+        private int id;
 
-        public UpdateItemTask(Context context) {
+        public UpdateItemTask(Context context, int id) {
+            this.id = id;
             this.context = context;
         }
 
@@ -48,7 +55,7 @@ public class ItemTool {
         protected Boolean doInBackground(Item... items) {
             ItemDatabase database = ItemDatabase.getInstance(context);
             ItemDao itemDao = database.itemDao();
-            itemDao.update(items[0]);
+            itemDao.updateItem(id, items[0].getName(), items[0].getBirthDate(), items[0].getExpirationDate(), items[0].getRemindDate(), items[0].getSrc());
             // 返回更新操作的结果，true表示成功，false表示失败
             return true;
         }
@@ -56,10 +63,8 @@ public class ItemTool {
         @Override
         protected void onPostExecute(Boolean success) {
             if (success) {
-                // 更新成功
                 Toast.makeText(context, "更新成功", Toast.LENGTH_SHORT).show();
             } else {
-                // 更新失败
                 Toast.makeText(context, "更新失败", Toast.LENGTH_SHORT).show();
             }
         }
@@ -126,15 +131,6 @@ public class ItemTool {
                 return false;
             }
         }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            if (success) {
-                Toast.makeText(context, "复制成功", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, "复制失败", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     public static class GetAllItemsTask extends AsyncTask<Void, Void, List<Item>> {
@@ -157,6 +153,46 @@ public class ItemTool {
         protected void onPostExecute(List<Item> items) {
             listener.onTaskCompleted(items);
         }
+    }
+
+    public static class editItem extends AsyncTask<Void, Void, Item> {
+        private final int id;
+        private WeakReference<Activity> activityRef;
+        private Context context;
+
+        public editItem(Context context, Activity activity, int id) {
+            activityRef = new WeakReference<>(activity);
+            this.context = context;
+            this.id = id;
+        }
+
+        @Override
+        protected Item doInBackground(Void... voids) {
+            ItemDatabase database = ItemDatabase.getInstance(context);
+            ItemDao itemDao = database.itemDao();
+            Item item = itemDao.getItemById(id);
+            return item;
+        }
+
+        protected void onPostExecute(Item item) {
+            Activity activity = activityRef.get();
+            if (activity != null) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        TextView dateText = activity.findViewById(R.id.birthDate_text);
+                        TextView timeoutText = activity.findViewById(R.id.expirationDate_text);
+                        TextView titleTextView = activity.findViewById(R.id.titleTextView);
+                        EditText editText = activity.findViewById(R.id.add_editText);
+                        dateText.setText(switchDate.convertTimestampToString(item.getBirthDate()));
+                        timeoutText.setText(switchDate.convertTimestampToString(item.getExpirationDate()));
+                        titleTextView.setText("编辑");
+                        editText.setText(item.getName());
+                    }
+                });
+            }
+        }
+
     }
 
     public interface OnTaskCompleted {

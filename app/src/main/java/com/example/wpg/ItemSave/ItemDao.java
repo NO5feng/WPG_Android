@@ -6,7 +6,6 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
-import androidx.room.Update;
 
 
 import java.util.List;
@@ -16,9 +15,6 @@ public interface ItemDao {
     @Insert
     void insert(Item item);
 
-    @Update
-    void update(Item item);
-
     @Delete
     void delete(Item item);
 
@@ -27,5 +23,9 @@ public interface ItemDao {
 
     @Query("SELECT * FROM items WHERE id = :itemId")
     Item getItemById(int itemId);
+
+    @Query("UPDATE items SET name = :newName, birthDate = :newBirthDate, expirationDate = :newExpirationDate, remindDate = :newRemindDate, src = :newSrc WHERE id = :itemId")
+    void updateItem(int itemId, String newName, Long newBirthDate, Long newExpirationDate, Long newRemindDate,  String newSrc);
+
 }
 

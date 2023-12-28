@@ -1,24 +1,18 @@
 package com.example.wpg;
 
-import android.content.Context;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.wpg.ItemSave.Item;
-import com.example.wpg.ItemSave.ItemDao;
-import com.example.wpg.ItemSave.ItemDatabase;
 import com.example.wpg.ItemSave.ItemTool;
 import com.example.wpg.entity.SlideDialog;
 import com.example.wpg.utils.switchDate;
@@ -37,6 +31,7 @@ public class addItem extends AppCompatActivity {
     TextView birthDateTextView;
     TextView expirationDateTextView;
     private long remindDate = 0;
+    private int itemID = 0;
 
 
     // 获取当前日期
@@ -50,6 +45,8 @@ public class addItem extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.add_toolbar);
         setSupportActionBar(toolbar);
+        int id = getIntent().getIntExtra("id", 0);
+        itemID = id;
         initDate();
 
         birthDateTextView = findViewById(R.id.birthDate_text);
@@ -71,7 +68,13 @@ public class addItem extends AppCompatActivity {
             item.setBirthDate(birthDate);
             item.setExpirationDate(expirationDate);
             item.setRemindDate(remindDate);
-            new ItemTool.InsertItemTask(this).execute(item);
+            String entryPoint = getIntent().getStringExtra("AddPoint");
+            if (entryPoint != null && entryPoint.equals("mainActivity")) {
+                new ItemTool.InsertItemTask(this).execute(item);
+            } else {
+                new ItemTool.UpdateItemTask(this, itemID).execute(item);
+            }
+
             onBackPressed();
         });
     }
@@ -95,8 +98,14 @@ public class addItem extends AppCompatActivity {
         TextView dateText = findViewById(R.id.birthDate_text);
         TextView timeoutText = findViewById(R.id.expirationDate_text);
 
-        dateText.setText(formatDateString((currentYear + "-" + currentMonth + "-" + currentDay)));
-        timeoutText.setText(formatDateString((timeoutYear + "-" + sixAfterMonth + "-" + currentDay)));
+        String entryPoint = getIntent().getStringExtra("AddPoint");
+        if (entryPoint != null && entryPoint.equals("mainActivity")) {
+            dateText.setText(formatDateString((currentYear + "-" + currentMonth + "-" + currentDay)));
+            timeoutText.setText(formatDateString((timeoutYear + "-" + sixAfterMonth + "-" + currentDay)));
+        } else {
+            new ItemTool.editItem(this, this, itemID).execute();
+        }
+
 
         // dialog 型的日期选择器
         View Date_layout = findViewById(R.id.birthDate_ly);

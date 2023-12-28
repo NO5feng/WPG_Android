@@ -2,7 +2,6 @@ package com.example.wpg;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import android.annotation.SuppressLint;
@@ -37,7 +36,6 @@ public class MainActivity extends AppCompatActivity implements ItemTool.OnTaskCo
 
     private ItemDatabase database;
     private ImageView addImageView;
-    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements ItemTool.OnTaskCo
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, addItem.class);
+                intent.putExtra("AddPoint", "mainActivity");
                 startActivity(intent);
             }
         });
@@ -152,6 +151,12 @@ public class MainActivity extends AppCompatActivity implements ItemTool.OnTaskCo
             initView();
             dialog.dismiss()
         ;});
+        btn_edit.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, addItem.class);
+            intent.putExtra("id", id);
+            startActivity(intent);
+            dialog.dismiss()
+            ;});
         btn_delete.setOnClickListener(v -> {
             new ItemTool.DeleteItemTask(context, id).execute();
             initView();

@@ -9,6 +9,7 @@
 
 <!--    add页面-->
     <string name="add_title">新增</string>
+    <string name="edit_title">编辑</string>
     <string name="add_remind">提醒我</string>
     <string name="add_input">请输入物品名称</string>
     <string name="add_src_input">插入物品图片</string>
