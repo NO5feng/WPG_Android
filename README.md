@@ -8,8 +8,8 @@
 记录物品的过期时间
 
 
-https://github.com/NO5feng/WPG_Android/assets/97101453/e76f5626-8ef8-4e49-b3af-fa063d6d4f0e
 
+https://github.com/NO5feng/WPG_Android/assets/97101453/02564e7d-9ee3-4212-b852-1c50dff0dd35
 
 
 
