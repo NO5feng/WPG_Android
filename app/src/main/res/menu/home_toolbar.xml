@@ -4,8 +4,8 @@
 
     <item
         android:id="@+id/set_button"
-        android:icon="@drawable/set_button"
-        android:title="set_button"
+        android:icon="@drawable/heard"
+        android:title="@string/set_button2"
         app:showAsAction="always">
     </item>
 

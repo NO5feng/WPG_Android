@@ -7,14 +7,14 @@
     <string name="day">天</string>
     <string name="overdue">已过期</string>
 
-<!--    add页面-->
+    <!--    add页面-->
     <string name="add_title">新增</string>
     <string name="edit_title">编辑</string>
     <string name="add_remind">提醒我</string>
     <string name="add_input">请输入物品名称</string>
     <string name="add_src_input">插入物品图片</string>
 
-<!--    dialog-->
+    <!--    dialog-->
     <string name="dialog_remind_title">选择提醒时间</string>
     <string name="dialog_datePick_title">生产日期</string>
     <string name="dialog_timeout_title">保质期</string>
@@ -24,4 +24,5 @@
     <string name="dialog_Copy_btn">复制</string>
     <string name="dialog_Editing_btn">编辑</string>
     <string name="dialog_Delete_btn">删除</string>
+    <string name="set_button2">set_button2</string>
 </resources>
